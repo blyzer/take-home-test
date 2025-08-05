@@ -22,6 +22,17 @@ namespace Fundo.Applications.WebApi
             services.AddDbContext<LoanContext>(options =>
             options.UseSqlServer(_configuration.GetConnectionString("DefaultConnection")));
             services.AddControllers();
+            
+            services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAngularApp",
+                    builder =>
+                    {
+                        builder.WithOrigins("http://localhost:4200") // Angular dev server
+                               .AllowAnyMethod()
+                               .AllowAnyHeader();
+                    });
+            });
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, LoanContext context)
@@ -30,6 +41,9 @@ namespace Fundo.Applications.WebApi
             {
                 app.UseDeveloperExceptionPage();
             }
+            
+            app.UseCors("AllowAngularApp");
+            
             app.UseRouting();
             app.UseAuthorization();
             app.UseEndpoints(endpoints => endpoints.MapControllers());
