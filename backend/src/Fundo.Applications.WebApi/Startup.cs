@@ -82,7 +82,11 @@ namespace Fundo.Applications.WebApi
                 app.UseDeveloperExceptionPage();
             }
             
-            app.UseCors("AllowAngularApp");
+            app.UseCors(builder => builder
+                .WithOrigins("http://localhost:4200")
+                .AllowAnyMethod()
+                .AllowAnyHeader()
+                .AllowCredentials());
             
             app.UseRouting();
             
