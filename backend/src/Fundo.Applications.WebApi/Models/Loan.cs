@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace Fundo.Applications.WebApi
+namespace Fundo.Applications.WebApi.Models
 {
     public class Loan
     {
