@@ -1,32 +1,82 @@
 .loans {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
   padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
 
-  &--container {
-    width: 60%;
+.loans--container {
+  background: white;
+  border-radius: 8px;
+  padding: 24px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+  color: #333;
+  font-size: 2rem;
+  margin-bottom: 24px;
+  text-align: center;
+}
+
+.loading-container,
+.error-container,
+.no-data {
+  text-align: center;
+  padding: 40px 20px;
+  color: #666;
+}
+
+.error-container {
+  .error-message {
+    color: #d32f2f;
+    margin-bottom: 16px;
+    font-weight: 500;
   }
 }
 
-.mdc-data-table {
-  &__table {
-    margin-top: 20px;
-    border: 1px solid #dee5ed;
-    border-radius: 4px;
-  }
-
-  &__header-cell {
-    color: #7b8187;
-  }
+table {
+  width: 100%;
+  margin-top: 16px;
 }
 
-@media (max-width: 992px) {
+.status-active {
+  color: #2e7d2e;
+  font-weight: 500;
+  text-transform: uppercase;
+  font-size: 0.875rem;
+}
+
+.status-paid {
+  color: #666;
+  font-weight: 500;
+  text-transform: uppercase;
+  font-size: 0.875rem;
+}
+
+.mat-column-amount,
+.mat-column-currentBalance {
+  text-align: right;
+  padding-right: 16px;
+}
+
+.mat-column-status {
+  text-align: center;
+}
+
+@media (max-width: 768px) {
   .loans {
-    &--container {
-      width: 100%;
-    }
+    padding: 10px;
+  }
+  
+  .loans--container {
+    padding: 16px;
+  }
+  
+  h1 {
+    font-size: 1.5rem;
+  }
+  
+  table {
+    font-size: 0.875rem;
   }
 }

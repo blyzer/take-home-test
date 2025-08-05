@@ -47,6 +47,8 @@ namespace Fundo.Applications.WebApi
             app.UseRouting();
             app.UseAuthorization();
             app.UseEndpoints(endpoints => endpoints.MapControllers());
+            
+            // Seed data
             SeedData(context);
         }
         private void SeedData(LoanContext context)
