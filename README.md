@@ -27,6 +27,7 @@ This is a full-stack Loan Management System built with .NET Core 6 backend and A
 - ✅ **Loading states** and user feedback
 - ✅ **Angular Material** components for professional UI
 - ✅ **Responsive design** for mobile and desktop
+- ✅ **Authentication and Authorization** with a login interface, JWT token handling, and route guards for role-based access control.
 
 #### DevOps
 - ✅ **Dockerized backend** with multi-stage build
@@ -279,14 +280,6 @@ Logs out the current user.
 **Solution**: Added specific CORS policy allowing the Angular development server origin with proper headers and methods.
 
 ---
-
-## Features Not Implemented (Future Improvements)
-
-### Security Enhancements
-- **Authentication & Authorization**: JWT-based authentication with role-based access control
-- **API Rate Limiting**: Prevent abuse with throttling middleware
-- **Input Sanitization**: Additional validation beyond basic model validation
-- **HTTPS Enforcement**: SSL certificates for production deployment
 
 ### Advanced Features
 - **Pagination**: Large dataset handling with server-side pagination
