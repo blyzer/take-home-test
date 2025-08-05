@@ -1,5 +1,10 @@
+using Microsoft.AspNetCore.Http;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Http;
+using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc.Testing;
 using System.Net.Http;
+using System.Net.Http.Json;
 using System.Threading.Tasks;
 using Xunit;
 using Microsoft.EntityFrameworkCore;
@@ -33,10 +38,22 @@ namespace Fundo.Services.Tests.Integration
             return new LoanContext(options);
         }
 
+        private async Task<HttpClient> GetAuthenticatedClientAsync()
+        {
+            var client = _factory.CreateClient();
+            var loginModel = new LoginRequest { Username = "admin", Password = "password" };
+            var response = await client.PostAsJsonAsync("/auth/login", loginModel);
+            response.EnsureSuccessStatusCode();
+            var authResponse = await response.Content.ReadFromJsonAsync<AuthResponse>();
+            client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", authResponse.Token);
+            return client;
+        }
+
         [Fact]
         public async Task GetBalances_ShouldReturnExpectedResult()
         {
-            var response = await _client.GetAsync("/loans"); 
+            var client = await GetAuthenticatedClientAsync();
+            var response = await client.GetAsync("/loans"); 
 
             response.EnsureSuccessStatusCode(); 
             Assert.Equal(System.Net.HttpStatusCode.OK, response.StatusCode);
@@ -46,7 +63,19 @@ namespace Fundo.Services.Tests.Integration
         public async Task CreateLoan_ShouldAddLoan()
         {
             using var context = GetInMemoryDbContext();
-            var controller = new LoanManagementController(context);
+            var controller = new LoanManagementController(context)
+            {
+                ControllerContext = new ControllerContext
+                {
+                    HttpContext = new DefaultHttpContext
+                    {
+                        User = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
+                        {
+                            new Claim(ClaimTypes.NameIdentifier, "testuser")
+                        }, "someAuthTypeName"))
+                    }
+                }
+            };
             var loan = new Loan { Amount = 1000, CurrentBalance = 1000, ApplicantName = "Test", Status = "active" };
 
             var result = await controller.CreateLoan(loan);
@@ -63,7 +92,19 @@ namespace Fundo.Services.Tests.Integration
             var loan = new Loan { Id = 1, Amount = 1000, CurrentBalance = 1000, ApplicantName = "Test", Status = "active" };
             context.Loans.Add(loan);
             await context.SaveChangesAsync();
-            var controller = new LoanManagementController(context);
+            var controller = new LoanManagementController(context)
+            {
+                ControllerContext = new ControllerContext
+                {
+                    HttpContext = new DefaultHttpContext
+                    {
+                        User = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
+                        {
+                            new Claim(ClaimTypes.NameIdentifier, "testuser")
+                        }, "someAuthTypeName"))
+                    }
+                }
+            };
 
             var result = await controller.MakePayment(1, 500);
 
