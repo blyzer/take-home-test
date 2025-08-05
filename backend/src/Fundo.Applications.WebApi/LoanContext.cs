@@ -8,6 +8,7 @@ namespace Fundo.Applications.WebApi
         public LoanContext(DbContextOptions<LoanContext> options) : base(options) { }
         public DbSet<Loan> Loans { get; set; }
         public DbSet<User> Users { get; set; }
+        public DbSet<AuditLog> AuditLogs { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

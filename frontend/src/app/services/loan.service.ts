@@ -18,8 +18,8 @@ export class LoanService {
 
   constructor(private http: HttpClient) { }
 
-  getLoans(): Observable<Loan[]> {
-    return this.http.get<Loan[]>(this.apiUrl);
+  getLoans(page: number = 1, pageSize: number = 10, filter: string = '', sort: string = ''): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}?page=${page}&pageSize=${pageSize}&filter=${filter}&sort=${sort}`);
   }
 
   getLoan(id: number): Observable<Loan> {
@@ -32,5 +32,9 @@ export class LoanService {
 
   makePayment(id: number, paymentAmount: number): Observable<void> {
     return this.http.post<void>(`${this.apiUrl}/${id}/payment`, paymentAmount);
+  }
+
+  getAuditLogs(id: number): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/${id}/audit`);
   }
 }

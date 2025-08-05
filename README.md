@@ -19,6 +19,8 @@ This is a full-stack Loan Management System built with .NET Core 6 backend and A
 - ✅ **CORS configuration** for Angular frontend
 - ✅ **Input validation** and error handling
 - ✅ **Authentication and Authorization** with JWT 
+- ✅ **Pagination, Searching, and Filtering** for loan data
+- ✅ **Audit Logging** for loan creation and payments 
 
 #### Frontend (Angular 19)
 - ✅ **Responsive data table** displaying loan information
@@ -28,6 +30,8 @@ This is a full-stack Loan Management System built with .NET Core 6 backend and A
 - ✅ **Angular Material** components for professional UI
 - ✅ **Responsive design** for mobile and desktop
 - ✅ **Authentication and Authorization** with a login interface, JWT token handling, and route guards for role-based access control.
+- ✅ **Pagination, Searching, and Sorting** for loan data
+- ✅ **Audit Log** display
 
 #### DevOps
 - ✅ **Dockerized backend** with multi-stage build
@@ -278,29 +282,6 @@ Logs out the current user.
 **Challenge**: Angular frontend couldn't communicate with API due to CORS restrictions.
 
 **Solution**: Added specific CORS policy allowing the Angular development server origin with proper headers and methods.
-
----
-
-### Advanced Features
-- **Pagination**: Large dataset handling with server-side pagination
-- **Search & Filtering**: Advanced query capabilities for loan data
-- **Audit Logging**: Track all loan modifications and payments
-- **Payment History**: Detailed transaction history for each loan
-- **Notification System**: Email/SMS notifications for payment reminders
-
-### DevOps & Monitoring
-- **GitHub Actions**: CI/CD pipeline for automated testing and deployment
-- **Structured Logging**: Serilog integration with centralized logging
-- **Health Endpoints**: Comprehensive application health monitoring
-- **Performance Monitoring**: Application Insights or similar APM tools
-- **Database Backup Strategy**: Automated backup and recovery procedures
-
-### Frontend Enhancements
-- **State Management**: NgRx for complex state management
-- **Progressive Web App**: Offline capabilities and push notifications
-- **Advanced UI**: Charts and dashboards for loan analytics
-- **Print/Export**: PDF generation and Excel export functionality
-- **Internationalization**: Multi-language support
 
 ---
 
