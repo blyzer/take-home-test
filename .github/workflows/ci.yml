@@ -1,0 +1,121 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  backend-test:
+    name: Backend Tests
+    runs-on: ubuntu-latest
+    
+    services:
+      sqlserver:
+        image: mcr.microsoft.com/mssql/server:2019-latest
+        env:
+          SA_PASSWORD: "TestPassword123!"
+          ACCEPT_EULA: "Y"
+        ports:
+          - 1433:1433
+        options: >-
+          --health-cmd="/opt/mssql-tools/bin/sqlcmd -U sa -P TestPassword123! -Q 'SELECT 1'"
+          --health-interval=10s
+          --health-timeout=3s
+          --health-retries=10
+
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '6.0.x'
+    
+    - name: Restore dependencies
+      run: dotnet restore backend/src/Fundo.Applications.WebApi/Fundo.Applications.WebApi.csproj
+    
+    - name: Build
+      run: dotnet build backend/src/Fundo.Applications.WebApi/Fundo.Applications.WebApi.csproj --no-restore
+    
+    - name: Test
+      run: dotnet test backend/src/Fundo.Services.Tests/Fundo.Services.Tests.csproj --no-build --logger "trx;LogFileName=test-results.trx"
+    
+    - name: Publish Test Results
+      uses: dorny/test-reporter@v1
+      if: success() || failure()
+      with:
+        name: Backend Test Results
+        path: backend/src/Fundo.Services.Tests/TestResults/test-results.trx
+        reporter: dotnet-trx
+
+  frontend-test:
+    name: Frontend Tests
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        cache-dependency-path: frontend/package-lock.json
+    
+    - name: Install dependencies
+      run: |
+        cd frontend
+        npm ci
+    
+    - name: Build
+      run: |
+        cd frontend
+        npm run build
+    
+    - name: Test
+      run: |
+        cd frontend
+        npm run test -- --watch=false --browsers=ChromeHeadless
+
+  docker-build:
+    name: Docker Build
+    runs-on: ubuntu-latest
+    needs: [backend-test, frontend-test]
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+    
+    - name: Build Docker image
+      uses: docker/build-push-action@v5
+      with:
+        context: .
+        file: ./Dockerfile
+        push: false
+        tags: loan-management-api:latest
+        cache-from: type=gha
+        cache-to: type=gha,mode=max
+
+  security-scan:
+    name: Security Scan
+    runs-on: ubuntu-latest
+    needs: [backend-test]
+    
+    steps:
+    - uses: actions/checkout@v4
+    - name: Run Trivy vulnerability scanner
+      uses: aquasecurity/trivy-action@master
+      with:
+        scan-type: 'fs'
+        scan-ref: '.'
+        format: 'sarif'
+        output: 'trivy-results.sarif'
+    
+    - name: Upload Trivy scan results to GitHub Security tab
+      uses: github/codeql-action/upload-sarif@v3
+      with:
+        sarif_file: 'trivy-results.sarif'
