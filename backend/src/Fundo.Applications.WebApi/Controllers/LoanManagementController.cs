@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace Fundo.Applications.WebApi.Controllers
 {
     [ApiController]
-    [Route("/loan")]
+    [Route("/loans")]
     public class LoanManagementController : Controller
     {
         private readonly LoanContext _context;
