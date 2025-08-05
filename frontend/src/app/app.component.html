@@ -1,5 +1,10 @@
 <main class="loans">
   <section class="loans--container">
+    <div *ngIf="currentUser">
+      <span>Welcome, {{ currentUser.username }}</span>
+      <button mat-button (click)="logout()">Logout</button>
+    </div>
+
     <h1>Loan Management</h1>
     
     <!-- Loading state -->
@@ -14,7 +19,7 @@
     </div>
     
     <!-- Loans table -->
-    <div *ngIf="!loading && !error">
+    <div *ngIf="!loading && !error && currentUser">
       <table mat-table [dataSource]="loans" class="mat-elevation-z8">
         <ng-container matColumnDef="amount">
           <th mat-header-cell *matHeaderCellDef>Loan Amount</th>
@@ -49,6 +54,10 @@
       <div *ngIf="loans.length === 0" class="no-data">
         <p>No loans found.</p>
       </div>
+    </div>
+
+    <div *ngIf="!currentUser">
+      <router-outlet></router-outlet>
     </div>
   </section>
 </main>

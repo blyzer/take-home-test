@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { MatTableModule } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
 import { LoanService, Loan } from './services/loan.service';
+import { AuthService } from './services/auth.service';
+import { User } from './models/auth.models';
 
 @Component({
   selector: 'app-root',
@@ -21,11 +23,17 @@ export class AppComponent implements OnInit {
   loans: Loan[] = [];
   loading = true;
   error: string | null = null;
+  currentUser: User | null = null;
 
-  constructor(private loanService: LoanService) {}
+  constructor(private loanService: LoanService, private authService: AuthService) {}
 
   ngOnInit() {
-    this.loadLoans();
+    this.authService.currentUser$.subscribe(user => {
+      this.currentUser = user;
+      if (user) {
+        this.loadLoans();
+      }
+    });
   }
 
   loadLoans() {
@@ -43,5 +51,9 @@ export class AppComponent implements OnInit {
         this.loading = false;
       }
     });
+  }
+
+  logout() {
+    this.authService.logout();
   }
 }

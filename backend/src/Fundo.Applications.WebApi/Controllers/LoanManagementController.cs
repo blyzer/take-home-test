@@ -1,6 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 using Fundo.Applications.WebApi.Models;
+using Fundo.Applications.WebApi.Attributes;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -8,7 +12,8 @@ namespace Fundo.Applications.WebApi.Controllers
 {
     [ApiController]
     [Route("/loans")]
-    public class LoanManagementController : Controller
+    [AuthenticatedUser]
+    public class LoanManagementController : ControllerBase
     {
         private readonly LoanContext _context;
 
@@ -17,15 +22,24 @@ namespace Fundo.Applications.WebApi.Controllers
             _context = context;
         }
 
-        // POST /loans
+        // POST /loans - Only Managers and Admins can create loans
         [HttpPost]
+        [ManagerOrAdmin]
         public async Task<ActionResult<Loan>> CreateLoan(Loan loan)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
-            _context.Loans.Add(loan);
-            await _context.SaveChangesAsync();
-            return CreatedAtAction(nameof(GetLoan), new { id = loan.Id }, loan);
+                
+            try
+            {
+                _context.Loans.Add(loan);
+                await _context.SaveChangesAsync();
+                return CreatedAtAction(nameof(GetLoan), new { id = loan.Id }, loan);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "An error occurred while creating the loan", error = ex.Message });
+            }
         }
 
         // GET /loans/{id}

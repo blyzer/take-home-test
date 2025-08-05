@@ -18,6 +18,7 @@ This is a full-stack Loan Management System built with .NET Core 6 backend and A
 - ✅ **Docker support** with Docker Compose
 - ✅ **CORS configuration** for Angular frontend
 - ✅ **Input validation** and error handling
+- ✅ **Authentication and Authorization** with JWT 
 
 #### Frontend (Angular 19)
 - ✅ **Responsive data table** displaying loan information
@@ -203,6 +204,31 @@ Make a payment towards a loan
 **Notes:**
 - Payment amount must be positive and not exceed current balance
 - Loan status automatically changes to "paid" when balance reaches zero
+
+#### POST /auth/login
+Authenticate a user and receive a JWT token.
+
+**Request Body:**
+```json
+{
+  "username": "admin",
+  "password": "string"
+}
+```
+
+**Response:**
+```json
+{
+  "token": "<jwt_token>",
+  "username": "admin",
+  "roles": [
+    "Admin"
+  ]
+}
+```
+
+#### POST /auth/logout
+Logs out the current user.
 
 ---
 
