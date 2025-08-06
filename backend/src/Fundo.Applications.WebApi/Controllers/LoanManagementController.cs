@@ -99,11 +99,13 @@ namespace Fundo.Applications.WebApi.Controllers
                 }
             }
 
+            var total = await query.CountAsync();
             var loans = await query.Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
+
             return Ok(new {
                 Page = page,
                 PageSize = pageSize,
-                Total = await query.CountAsync(),
+                Total = total,
                 Data = loans
             });
         }

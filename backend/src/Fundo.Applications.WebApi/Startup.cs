@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Text;
+using System.Collections.Generic;
 using Fundo.Applications.WebApi.Models;
 using Fundo.Applications.WebApi.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -102,17 +103,42 @@ namespace Fundo.Applications.WebApi
         }
         private void SeedData(LoanContext context)
         {
-            if (!context.Loans.Any())
+            context.Loans.RemoveRange(context.Loans);
+            context.SaveChanges();
+
+            var initialLoans = new List<Loan>
             {
-                context.Loans.AddRange(
-                    new Loan { Amount = 25000, CurrentBalance = 18750, ApplicantName = "John Doe", Status = "active" },
-                    new Loan { Amount = 15000, CurrentBalance = 0, ApplicantName = "Jane Smith", Status = "paid" },
-                    new Loan { Amount = 50000, CurrentBalance = 32500, ApplicantName = "Robert Johnson", Status = "active" },
-                    new Loan { Amount = 10000, CurrentBalance = 0, ApplicantName = "Emily Williams", Status = "paid" },
-                    new Loan { Amount = 75000, CurrentBalance = 72000, ApplicantName = "Michael Brown", Status = "active" }
-                );
-                context.SaveChanges();
+                new Loan { Amount = 25000, CurrentBalance = 18750, ApplicantName = "John Doe", Status = "active" },
+                new Loan { Amount = 15000, CurrentBalance = 0, ApplicantName = "Jane Smith", Status = "paid" },
+                new Loan { Amount = 50000, CurrentBalance = 32500, ApplicantName = "Robert Johnson", Status = "active" },
+                new Loan { Amount = 10000, CurrentBalance = 0, ApplicantName = "Emily Williams", Status = "paid" },
+                new Loan { Amount = 75000, CurrentBalance = 72000, ApplicantName = "Michael Brown", Status = "active" }
+            };
+
+            context.Loans.AddRange(initialLoans);
+
+            var random = new Random();
+            var firstNames = new[] { "Olivia", "Liam", "Emma", "Noah", "Ava", "Oliver", "Sophia", "Elijah", "Isabella", "James" };
+            var lastNames = new[] { "Smith", "Johnson", "Williams", "Brown", "Jones", "Garcia", "Miller", "Davis", "Rodriguez", "Martinez" };
+            var statuses = new[] { "active", "paid", "defaulted" };
+
+            for (int i = 0; i < 45; i++)
+            {
+                var applicantName = $"{firstNames[random.Next(firstNames.Length)]} {lastNames[random.Next(lastNames.Length)]}";
+                var amount = random.Next(5000, 100001);
+                var status = statuses[random.Next(statuses.Length)];
+                var currentBalance = status == "paid" ? 0 : random.Next(0, amount);
+
+                context.Loans.Add(new Loan
+                {
+                    Amount = amount,
+                    CurrentBalance = currentBalance,
+                    ApplicantName = applicantName,
+                    Status = status
+                });
             }
+
+            context.SaveChanges();
         }
         
         private void SeedUsers(LoanContext context)
